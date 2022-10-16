@@ -6,11 +6,18 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
-/// <summary>
-/// 
-/// </summary>
 namespace Titanium
 {
+	/// <summary>
+	/// Just my library of small functions that makes c# programming easier. The automatization of automatization instrument
+	/// <para> Despite of the program license, THIS file is <see href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA</see></para>
+	/// <list type="table">
+	/// <item>
+	/// <term>Author</term>
+	/// <see href="https://github.com/TuTAH1">Титан</see>
+	/// </item>
+	/// </list>
+	/// </summary>
     public static class TypesFuncs
     { //!03.10.2021 legacy
 
