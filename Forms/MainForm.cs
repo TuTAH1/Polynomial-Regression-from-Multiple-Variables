@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MathNet.Numerics.Distributions;
 using MathNet.Numerics.LinearAlgebra.Double;
-using Titanium;
 
 namespace Program
 {
@@ -102,7 +101,7 @@ namespace Program
 				panelColumnButtons.Controls.Add(btn);
 			}
 			if (dgv1.Columns.Count >= 2) btnCalculatePolynom.Enabled = true;
-			_polynoms = null;
+			_Polynoms = null;
 			btnAddRow.Enabled = true;
 		}
 
@@ -117,7 +116,7 @@ namespace Program
 		{
 			if (dgv1.Columns.Count < 2) {btnCalculatePolynom.Enabled = false;
 				if (dgv1.ColumnCount < 1) btnAddRow.Enabled = false;}
-			_polynoms = null;
+			_Polynoms = null;
 			ColumnButtons[e.Column.Index].Dispose();
 			ColumnButtons.RemoveAt(e.Column.Index);
 		}
@@ -138,16 +137,16 @@ namespace Program
 			btnAddRow.PerformClick();
 		}
 
-		private PolynomialRegression[,] ___;
-		private PolynomialRegression[,] _polynoms
+		private PolynomialRegression[,] ___polynoms;
+		private PolynomialRegression[,] _Polynoms
 		{
 			get
 			{
-				return ___;
+				return ___polynoms;
 			}
 			set
 			{
-				___ = value;
+				___polynoms = value;
 				if (value == null)
 				{
 					btnCalculatePolynom.Text = "Вычислить полином";
@@ -224,14 +223,14 @@ namespace Program
 					}
 				}
 
-				_polynoms = new PolynomialRegression[dgv1.Columns.Count,columnsCount]; //: Кубик зависимостей [известный столбец, неизвестный столбец], диагональ пуста
+				_Polynoms = new PolynomialRegression[dgv1.Columns.Count,columnsCount]; //: Кубик зависимостей [известный столбец, неизвестный столбец], диагональ пуста
 
 				for (int i = 0; i < columnsCount; i++)
 				{
 					for (int j = 0; j < columnsCount; j++)
 					{
 						if (i==j) continue;
-						_polynoms[i, j] = new PolynomialRegression(DenseVector.OfArray(benchmarkColumns[i]), DenseVector.OfArray(benchmarkColumns[j]), order);
+						_Polynoms[i, j] = new PolynomialRegression(DenseVector.OfArray(benchmarkColumns[i]), DenseVector.OfArray(benchmarkColumns[j]), order);
 					}
 				}
 
@@ -259,7 +258,7 @@ namespace Program
 			{
 				try
 				{
-					result += _polynoms[i, CellPosition.X].Fit(dgv1[i, CellPosition.Y].Value.ToString().ToDoubleT());
+					result += _Polynoms[i, CellPosition.X].Fit(dgv1[i, CellPosition.Y].Value.ToString().ToDoubleT());
 				}
 				catch (Exception)
 				{
@@ -294,7 +293,7 @@ namespace Program
 				columnNames[i] = dgv1.Columns[i].Name;
 			}
 
-			var form = new TraceForm(_polynoms, columnNames);
+			var form = new TraceForm(_Polynoms, columnNames);
 			form.Show();
 		}
 

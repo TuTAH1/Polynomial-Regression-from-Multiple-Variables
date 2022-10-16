@@ -71,16 +71,16 @@ namespace Program
 			this.dgv1.Name = "dgv1";
 			this.dgv1.RowHeadersWidth = 62;
 			this.dgv1.RowTemplate.Height = 33;
-			this.dgv1.Size = new System.Drawing.Size(970, 521);
+			this.dgv1.Size = new System.Drawing.Size(696, 521);
 			this.dgv1.TabIndex = 13;
 			// 
 			// btnSave
 			// 
 			this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnSave.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(255)))), ((int)(((byte)(222)))));
-			this.btnSave.Location = new System.Drawing.Point(749, 8);
+			this.btnSave.Location = new System.Drawing.Point(597, 8);
 			this.btnSave.Name = "btnSave";
-			this.btnSave.Size = new System.Drawing.Size(231, 38);
+			this.btnSave.Size = new System.Drawing.Size(107, 38);
 			this.btnSave.TabIndex = 6;
 			this.btnSave.Text = "Сохранить";
 			this.btnSave.UseVisualStyleBackColor = false;
@@ -90,9 +90,9 @@ namespace Program
 			// btnLoad
 			// 
 			this.btnLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnLoad.Location = new System.Drawing.Point(510, 8);
+			this.btnLoad.Location = new System.Drawing.Point(436, 8);
 			this.btnLoad.Name = "btnLoad";
-			this.btnLoad.Size = new System.Drawing.Size(231, 38);
+			this.btnLoad.Size = new System.Drawing.Size(155, 38);
 			this.btnLoad.TabIndex = 5;
 			this.btnLoad.Text = "Загрузить файл";
 			this.btnLoad.UseVisualStyleBackColor = true;
@@ -102,9 +102,9 @@ namespace Program
 			// labelInfo
 			// 
 			this.labelInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelInfo.Location = new System.Drawing.Point(510, 45);
+			this.labelInfo.Location = new System.Drawing.Point(436, 45);
 			this.labelInfo.Name = "labelInfo";
-			this.labelInfo.Size = new System.Drawing.Size(470, 38);
+			this.labelInfo.Size = new System.Drawing.Size(268, 38);
 			this.labelInfo.TabIndex = 6;
 			this.labelInfo.Text = "Полином вычислен!";
 			this.labelInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -139,7 +139,7 @@ namespace Program
 			// 
 			this.labelOrder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelOrder.AutoSize = true;
-			this.labelOrder.Location = new System.Drawing.Point(12, 659);
+			this.labelOrder.Location = new System.Drawing.Point(12, 661);
 			this.labelOrder.Name = "labelOrder";
 			this.labelOrder.Size = new System.Drawing.Size(174, 25);
 			this.labelOrder.TabIndex = 99;
@@ -148,7 +148,7 @@ namespace Program
 			// tbOrder
 			// 
 			this.tbOrder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.tbOrder.Location = new System.Drawing.Point(192, 656);
+			this.tbOrder.Location = new System.Drawing.Point(192, 658);
 			this.tbOrder.Name = "tbOrder";
 			this.tbOrder.Size = new System.Drawing.Size(81, 31);
 			this.tbOrder.TabIndex = 7;
@@ -157,7 +157,7 @@ namespace Program
 			// btnCalculateCell
 			// 
 			this.btnCalculateCell.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnCalculateCell.Location = new System.Drawing.Point(280, 700);
+			this.btnCalculateCell.Location = new System.Drawing.Point(12, 700);
 			this.btnCalculateCell.Name = "btnCalculateCell";
 			this.btnCalculateCell.Size = new System.Drawing.Size(314, 40);
 			this.btnCalculateCell.TabIndex = 10;
@@ -187,7 +187,7 @@ namespace Program
 			// 
 			// btnTrace
 			// 
-			this.btnTrace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.btnTrace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnTrace.Location = new System.Drawing.Point(493, 654);
 			this.btnTrace.Name = "btnTrace";
 			this.btnTrace.Size = new System.Drawing.Size(219, 40);
@@ -201,7 +201,7 @@ namespace Program
 			// 
 			this.btnCalculateAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnCalculateAll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(222)))), ((int)(((byte)(255)))));
-			this.btnCalculateAll.Location = new System.Drawing.Point(600, 700);
+			this.btnCalculateAll.Location = new System.Drawing.Point(332, 700);
 			this.btnCalculateAll.Name = "btnCalculateAll";
 			this.btnCalculateAll.Size = new System.Drawing.Size(381, 40);
 			this.btnCalculateAll.TabIndex = 11;
@@ -215,7 +215,7 @@ namespace Program
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(992, 745);
+			this.ClientSize = new System.Drawing.Size(718, 745);
 			this.Controls.Add(this.btnCalculateAll);
 			this.Controls.Add(this.btnTrace);
 			this.Controls.Add(this.btnAddRow);
@@ -231,9 +231,9 @@ namespace Program
 			this.Controls.Add(this.dgv1);
 			this.Controls.Add(this.btnSave);
 			this.Controls.Add(this.btnLoad);
-			this.MinimumSize = new System.Drawing.Size(924, 300);
+			this.MinimumSize = new System.Drawing.Size(740, 300);
 			this.Name = "MainForm";
-			this.Text = "Регрессионный анализ";
+			this.Text = "Регрессионный анализатор";
 			((System.ComponentModel.ISupportInitialize)(this.dgv1)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
