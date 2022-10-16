@@ -8,7 +8,7 @@ using System.Text;
 
 
 namespace Titanium {
-	public static class TypesFuncs { //!03.10.2021
+	public static class TypesFuncs { //!03.10.2021 legacy
 
 
 		#region Parsing
@@ -235,7 +235,7 @@ namespace Titanium {
 				/// <param name="Separator">Разделитель целой и дробной части</param>
 				/// <param name="CanBeShortcuted">Может ли нуль целой части быть опущен (".23" вместо "0.23")</param>
 				/// <returns></returns>
-				public static double ToDoubleT(this string str, char Separator = '.', bool CanBeShortcuted = true, bool DotShouldBeAttachedToNumber = true, int? ExceptionValue = null) //:06.10.2021 behavior changed a bit
+				public static double ToDoubleT(this string str, char Separator = '.', bool CanBeShortcuted = true, bool DotShouldBeAttachedToNumber = true, bool ThrowException = true) //:06.10.2021 behavior changed a bit
 				{
 					double Double = 0;
 					bool? IntPart = true;
@@ -276,11 +276,11 @@ namespace Titanium {
 
 					if (!isContainsDouble)
 					{
-						if (ExceptionValue == null)
+						if (ThrowException == true)
 						{
 							throw new ArgumentException("Строка не содержит числа");
 						}
-						else return (int)ExceptionValue;
+						else return double.NaN;
 					}
 					return Double;
 				}

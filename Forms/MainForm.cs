@@ -6,23 +6,44 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MathNet.Numerics.Distributions;
 using MathNet.Numerics.LinearAlgebra.Double;
 using Titanium;
 
-namespace ТПРО
+namespace Program
 {
-	public partial class Form1 : Form
+	public partial class MainForm : Form
 	{
-		public Form1()
+		
+		public MainForm()
 		{
 			InitializeComponent();
+			btnCalculateAll.Enabled = false;
 			btnSave.Enabled = false;
+			btnCalculateCell.Enabled = false;
+			btnCalculatePolynom.Enabled = false;
+			
 			labelInfo.Text = "";
 			dgv1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 			dgv1.AutoResizeColumns();
-			panel1.Controls.Add(new Button() {AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink});
+			panelColumnButtons.Controls.Add(new Button() {AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink});
+			btnAddRow.Enabled = false;
+			btnTrace.Enabled = false;
+			dgv1.ColumnAdded+=Dgv1_ColumnAdded;
+			dgv1.ColumnRemoved+=Dgv1_ColumnRemoved;
+			dgv1.RowsAdded+=Dgv1_RowsAdded;
+			dgv1.RowHeadersWidthChanged += ResizeButtons;
+			dgv1.ColumnWidthChanged += ResizeButtons;
+			ToolTip tip = new ToolTip();
+			tip.SetToolTip(btnCalculatePolynom,"Вычисляет полином, необходимый для регрессионного анализа");
+		}
+
+		private void Dgv1_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+		{
+			dgv1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToDisplayedHeaders);
 		}
 
 		#region Обработчики событий
@@ -61,15 +82,44 @@ namespace ТПРО
 		{
 			var ColumnName = tbAddColumn.Text;
 			dgv1.Columns.Add(ColumnName,ColumnName);
-			Button btn = new Button {BackColor = Color.DarkRed, ForeColor = Color.White};
-			btn.Click += DeleteColumn_Click;
-			ColumnButtons.Add(btn);
-			panel1.Controls.Add(btn);
-			ResizeButtons();
+			tbAddColumn.Text = "";
+			tbAddColumn.Focus();
+		}
+		private void tbAddColumn_KeyPress(object sender, KeyPressEventArgs e)
+		{
+			if (e.KeyChar != '\r') return;
+
+			btnAddColumn.PerformClick();
+		}
+
+		private void Dgv1_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
+		{
+			lock (this)
+			{
+				Button btn = new Button { BackColor = Color.DarkRed, ForeColor = Color.White };
+				btn.Click += DeleteColumn_Click;
+				ColumnButtons.Add(btn);
+				panelColumnButtons.Controls.Add(btn);
+			}
 			if (dgv1.Columns.Count >= 2) btnCalculatePolynom.Enabled = true;
-			btnCalculatePolynom.Text = "Вычислить полином";
-			btnCalculateCell.Enabled = false;
 			_polynoms = null;
+			btnAddRow.Enabled = true;
+		}
+
+		void DeleteColumn_Click(object sender, EventArgs eArgs)
+		{
+			int Row = ColumnButtons.IndexOf(sender as Button);
+			dgv1.Columns.RemoveAt(Row);
+			ResizeButtons();
+		}
+
+		private void Dgv1_ColumnRemoved(object sender, DataGridViewColumnEventArgs e)
+		{
+			if (dgv1.Columns.Count < 2) {btnCalculatePolynom.Enabled = false;
+				if (dgv1.ColumnCount < 1) btnAddRow.Enabled = false;}
+			_polynoms = null;
+			ColumnButtons[e.Column.Index].Dispose();
+			ColumnButtons.RemoveAt(e.Column.Index);
 		}
 
 		private void btnAddRow_Click(object sender, EventArgs e)
@@ -77,23 +127,40 @@ namespace ТПРО
 			var RowName = tbAddRow.Text;
 			dgv1.Rows.Add(1);
 			dgv1.Rows[^1].HeaderCell.Value = RowName;
-
+			tbAddRow.Text = "";
+			tbAddColumn.Focus();
 		}
 
-		void DeleteColumn_Click(object sender, EventArgs eArgs)
+		private void tbAddRow_KeyPress(object sender, KeyPressEventArgs e)
 		{
-			int Row = ColumnButtons.IndexOf(sender as Button);
-			ColumnButtons[Row].Dispose();
-			ColumnButtons.RemoveAt(Row);
-			dgv1.Columns.RemoveAt(Row);
-			ResizeButtons();
-			if (dgv1.Columns.Count < 2) btnCalculatePolynom.Enabled = false;
-			btnCalculatePolynom.Text = "Вычислить полином";
-			btnCalculateCell.Enabled = false;
-			_polynoms = null;
+			if (e.KeyChar != '\r') return;
+
+			btnAddRow.PerformClick();
 		}
 
-		private PolynomialRegression[,] _polynoms;
+		private PolynomialRegression[,] ___;
+		private PolynomialRegression[,] _polynoms
+		{
+			get
+			{
+				return ___;
+			}
+			set
+			{
+				___ = value;
+				if (value == null)
+				{
+					btnCalculatePolynom.Text = "Вычислить полином";
+					btnTrace.Enabled = btnCalculateCell.Enabled = btnCalculateAll.Enabled = false;
+					
+				}
+				else
+				{
+					btnCalculatePolynom.Text = "Пересчитать";
+					btnTrace.Enabled = btnCalculateCell.Enabled = btnCalculateAll.Enabled = true;
+				}
+			}
+		}
 
 		private void btnCalculatePolynom_Click(object sender, EventArgs eArgs)
 		{
@@ -104,6 +171,7 @@ namespace ТПРО
 				int order = tbOrder.Text.ToIntT(false, -1);
 				if (order == -1) throw new ApplicationException("Порядок должно быть числом");
 				tbOrder.Text = order.ToString();
+				labelInfo.Text = "Идёт вычисление полинома";
 
 				List<double[]> stuffedRow = new List<double[]>(); //: Строки, где ВСЕ ячейки заполненны
 				bool[,] emptyCells = new bool[dgv1.Rows.Count,columnsCount];
@@ -122,7 +190,7 @@ namespace ТПРО
 							double temp = -1;
 							try
 							{
-								temp = dgv1[j, i].Value.ToString().ToDoubleT();
+								temp = dgv1[j, i].Value.ToString().ToDoubleT(); //! Бутылочное горлышко
 							}
 							catch (Exception)
 							{
@@ -167,8 +235,7 @@ namespace ТПРО
 					}
 				}
 
-				btnCalculateCell.Enabled = true;
-				btnCalculatePolynom.Text = "Пересчитать полином";
+				labelInfo.Text = "Полином вычислен!";
 			}
 			catch (ApplicationException ex)
 			{
@@ -179,21 +246,82 @@ namespace ТПРО
 		private void btnCalculateCell_Click(object sender, EventArgs e)
 		{
 			var point = dgv1.CurrentCellAddress;
+			CalculateCell(point);
+			btnSave.Enabled = true;
+
+		}
+
+		private void CalculateCell(Point CellPosition)
+		{
 			int calculationsCount = 0;
 			double result = 0;
 			for (int i = 0; i < dgv1.Columns.Count; i++)
 			{
 				try
 				{
-					result+= _polynoms[i, point.X].Fit(dgv1[i, point.Y].Value.ToString().ToDoubleT());
+					result += _polynoms[i, CellPosition.X].Fit(dgv1[i, CellPosition.Y].Value.ToString().ToDoubleT());
 				}
-				catch (Exception ) { continue;}
+				catch (Exception)
+				{
+					continue;
+				}
 
 				calculationsCount++;
 			}
 
-			dgv1[point.X, point.Y].Value = result/calculationsCount;  //: Среднее арифметическое из всех вычисленных предположений
+			dgv1[CellPosition.X, CellPosition.Y].Value = result / calculationsCount; //: Среднее арифметическое из всех вычисленных предположений
+		}
 
+		private void btnCalculateAll_Click(object sender, EventArgs e)
+		{
+			foreach (DataGridViewRow row in dgv1.Rows)
+			{
+				foreach (DataGridViewCell cell in row.Cells)
+				{
+					if (!double.IsNaN(cell.Value.ToString().ToDoubleT(ThrowException: true))) continue; //: Если ячейка не пуста, то пропустить
+					
+					CalculateCell(new Point(cell.RowIndex, cell.ColumnIndex)); //: Иначе, вычислить значение
+				}
+			}
+		}
+
+		private void btnTrace_Click(object sender, EventArgs e)
+		{
+			string[] columnNames = new string[dgv1.ColumnCount];
+
+			for (int i = 0; i < columnNames.Length; i++)
+			{
+				columnNames[i] = dgv1.Columns[i].Name;
+			}
+
+			var form = new TraceForm(_polynoms, columnNames);
+			form.Show();
+		}
+
+		private void EnabledChanged(object sender, System.EventArgs e)
+		{
+			var btn = sender as Button;
+			if (!btn.Enabled)
+			{
+				DefaultColors.TryAdd(btn, (btn.BackColor, btn.ForeColor));
+			}
+
+			btn.BackColor = btn.Enabled ? DefaultColors[btn].Background : DisabledBackColor;
+			btn.ForeColor = btn.Enabled ? DefaultColors[btn].Foreground : DisabledForeColor;
+		}
+
+		static Color DisabledBackColor = ColorTranslator.FromHtml("#CCCCCC");
+		static Color DisabledForeColor = ColorTranslator.FromHtml("#a0a0a0");
+		static Dictionary<Button, (Color Background, Color Foreground)> DefaultColors = new();
+
+		private void ButtonPaint(object sender, System.Windows.Forms.PaintEventArgs e)
+		{
+			/*var btn = (Button)sender;
+			var text = btn.Text;
+			btn.Text = string.Empty;
+			TextRenderer.DrawText(e.Graphics,text,btn.Font, new Point(, 12),btn.ForeColor);*/
+			
+			base.OnPaint(e);
 		}
 
 		#endregion
@@ -225,8 +353,6 @@ namespace ТПРО
 					dgv1.Rows[^1].HeaderCell.Value = rows[0];
 				}
 
-				btnCalculatePolynom.Enabled = true;
-				btnCalculatePolynom.Text = "Рассчитать";
 				btnSave.Enabled = false;
 				MessageBox.Show("Файл успешно загружен", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
@@ -289,7 +415,7 @@ namespace ТПРО
 			Min
 		}
 
-		void ResizeButtons()
+		void ResizeButtons(object _ = null, EventArgs __ = null)
 		{
 
 			int ColumnLeft = dgv1.RowHeadersWidth;
@@ -316,14 +442,10 @@ namespace ТПРО
 
 				ColumnButtons[i].Text = text;
 				ColumnButtons[i].Left = ColumnLeft;
-				ColumnButtons[i].Size = new Size(size, panel1.Size.Height);
-				ColumnLeft += dgv1.Columns[i].Width+1;
+				ColumnButtons[i].Size = new Size(size, panelColumnButtons.Size.Height);
+				ColumnLeft += dgv1.Columns[i].Width;
 			}
 		}
-
-		#endregion
-
-		#region Математические функции
 
 		#endregion
 
@@ -339,5 +461,25 @@ namespace ТПРО
 				dgv.Columns.RemoveAt(0);
 			}
 		}
+
+		/*static Color DisabledBackColor = ColorTranslator.FromHtml("#CCCCCC");
+		static Color DisabledForeColor = ColorTranslator.FromHtml("#a0a0a0");
+		private static Dictionary<Button, (Color Background, Color Foreground)> DefaultColors = new();
+		
+
+		public static void ChangeDisableState(this Button btn, bool Enable)
+		{
+			if (btn.Enabled && !Enable) //: if enabled state is changes from true to false
+			{
+				DefaultColors.TryAdd(btn, (btn.BackColor, btn.ForeColor));
+			}
+			btn.Enabled = true;
+			btn.BackColor = Enable ? DefaultColors[btn].Background : DisabledBackColor;
+			btn.ForeColor = Enable ? DefaultColors[btn].Foreground : DisabledForeColor;
+			btn.Enabled = Enable;
+		}
+
+		public static void Enable(this Button btn) => btn.ChangeDisableState(true);
+		public static void Disable(this Button btn) => btn.ChangeDisableState(false);*/
 	}
 }

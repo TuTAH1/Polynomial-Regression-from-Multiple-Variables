@@ -1,7 +1,6 @@
 ﻿using System;
 using MathNet.Numerics.LinearAlgebra.Double;
 using MathNet.Numerics.LinearAlgebra;
-using Microsoft.VisualBasic.CompilerServices;
 
 /// <summary>
 /// <list type="table">
@@ -37,7 +36,8 @@ public class PolynomialRegression
 		for (int i = 0; i < n; i++)
 			vandMatrix.SetRow(i, VandermondeRow(xData[i]));
 		
-		_coefs = vandMatrix.TransposeThisAndMultiply(vandMatrix).LU().Solve(TransposeAndMult(vandMatrix, yData));
+		_coefs = vandMatrix.TransposeThisAndMultiply(vandMatrix).LU().
+			Solve(vandMatrix.TransposeThisAndMultiply(yData));
 	}
 
 	private Vector<double> VandermondeRow(double x)
@@ -52,18 +52,19 @@ public class PolynomialRegression
 		return new DenseVector(result);
 	}
 
-	private static DenseVector TransposeAndMult(Matrix m, Vector v)
-	{
-		var result = new DenseVector(m.ColumnCount);
-		for (int j = 0; j < m.RowCount; j++)
-		for (int i = 0; i < m.ColumnCount; i++)
-			result[i] += m[j, i] * v[j];
-		return result;
-	}
+	public double Fit(double x) => _coefs == null ? throw new Exception("Вычисление точки невозможно: коэффициенты не были вычислены. ") : VandermondeRow(x) * _coefs;
 
-	public double Fit(double x)
+	public string GetCoefs()
 	{
-		if (_coefs == null) throw new Exception("Вычисление точки невозможно: коэффициенты не были вычислены. ");
-		return VandermondeRow(x) * _coefs;
+		string str = "";
+
+		foreach (var num in _coefs)
+		{
+			str += num.ToString("G5") + ", ";
+		}
+
+		str = str[..^2];
+
+		return str;
 	}
 }
