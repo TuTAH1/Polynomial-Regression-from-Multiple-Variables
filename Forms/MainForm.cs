@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MathNet.Numerics.Distributions;
 using MathNet.Numerics.LinearAlgebra.Double;
+using Titanium;
 
 namespace Program
 {
