@@ -7,7 +7,7 @@
 - [Windows x32(x86)](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-5.0.17-windows-x86-installer)
 - [WindowsARM64](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-5.0.17-windows-arm64-installer)
 
-Скриншот программы:
+Скриншоты программы:
 
 ![Скриншот](https://user-images.githubusercontent.com/15982179/198378001-3fb9b8f1-9eee-43fc-a265-fce4a655b978.jpg)
 
