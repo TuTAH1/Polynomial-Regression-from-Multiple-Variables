@@ -16,7 +16,7 @@ namespace Program
 		
 		public MainForm()
 		{
-			//CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+			CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 			InitializeComponent();
 			btnCalculateAll.Enabled = false;
 			btnSave.Enabled = false;
@@ -380,26 +380,25 @@ namespace Program
 		{
 			try
 			{
-				using (var sw = new StreamWriter(Path,true))
+				using var sw = new StreamWriter(Path,false);
+				for (int i = 0; i < dgv1.Columns.Count; i++)  //: Заголовки столбцов
 				{
-					for (int i = 0; i < dgv1.Columns.Count; i++)  //: Заголовки столбцов
+					sw.Write(dgv1.Columns[i].HeaderText + (i== dgv1.Columns.Count-1? "": '\t'));
+				}
+
+				sw.WriteLine();
+
+				for (int i = 0; i < dgv1.Rows.Count; i++)
+				{
+					sw.Write(dgv1.Rows[i].HeaderCell.Value.ToString() + '\t'); //: Заголовок строки
+					for (int j = 0; j < dgv1.Rows[i].Cells.Count; j++)
 					{
-						sw.Write(dgv1.Columns[i].HeaderText + (i== dgv1.Columns.Count-1? "": '\t'));
-					}
+						var value = dgv1.Rows[i].Cells[j].Value;
+						sw.Write((value is double d? d.ToString(CultureInfo.InvariantCulture) : value.ToString()) + (j==dgv1.Rows[i].Cells.Count-1? '\n':'\t')); //: Значение ячейки
+					} //TODO: Модифицировать ToStringT(), чтобы гарантировано записывал только точки
+				}
 
-					sw.WriteLine();
-
-					for (int i = 0; i < dgv1.Rows.Count; i++)
-					{
-						sw.Write(dgv1.Rows[i].HeaderCell.Value.ToString() + '\t'); //: Заголовок строки
-						for (int j = 0; j < dgv1.Rows[i].Cells.Count; j++)
-						{
-							var value = dgv1.Rows[i].Cells[j].Value;
-							sw.Write(value is double d? d.ToString() : value.ToString() + (j==dgv1.Rows[i].Cells.Count-1? '\n':'\t')); //: Значение ячейки
-						} //TODO: Модифицировать ToStringT(), чтобы гарантировано записывал только точки
-					}
-
-					/*foreach (DataGridViewRow row in dgv1.Rows)
+				/*foreach (DataGridViewRow row in dgv1.Rows)
 					{
 						foreach (DataGridViewCell cell in row.Cells)
 						{
@@ -407,7 +406,6 @@ namespace Program
 						}	
 						sw.WriteLine('\n');
 					}*/
-				}
 			}
 			catch (Exception e)
 			{
