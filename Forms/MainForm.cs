@@ -465,9 +465,10 @@ namespace Program
 			e.Column.DefaultCellStyle.FormatProvider = CultureInfo.InvariantCulture;
 		}
 
+		//TODO: починить
 		private void dgv1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
 		{
-			if (e.ColumnIndex<0||e.RowIndex<0) return; //: WTF index<0???
+			/*if (e.ColumnIndex<0||e.RowIndex<0) return; //: WTF index<0???
 			var cellValue = dgv1[e.ColumnIndex, e.RowIndex].Value;
 			var cellStringValue = cellValue.ToString();
 			if (string.IsNullOrEmpty(cellStringValue)) return;
@@ -478,7 +479,7 @@ namespace Program
 				if (cellValue.ToString()[i].IsDoubleT()) break;
 			}
 			if (slicePosition != cellStringValue.Length) //:if cellStringValue changed
-				dgv1[e.ColumnIndex, e.RowIndex].Value = cellStringValue[..slicePosition];
+				dgv1[e.ColumnIndex, e.RowIndex].Value = cellStringValue[..slicePosition];*/
 
 		}
 	}
