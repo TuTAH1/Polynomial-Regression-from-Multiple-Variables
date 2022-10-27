@@ -9,6 +9,8 @@
 
 Скриншот программы:
 
+![123123ыфвфыв](https://user-images.githubusercontent.com/15982179/198378001-3fb9b8f1-9eee-43fc-a265-fce4a655b978.jpg)
+
 ![Скриншот 27-10-2022 230928_1](https://user-images.githubusercontent.com/15982179/198377634-0dac3030-c741-4ab9-a5ee-51e47d1307c3.jpg)
 
 Последние 2 ячейки вычисленны программой
