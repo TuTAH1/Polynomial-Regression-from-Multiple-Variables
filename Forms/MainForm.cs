@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using MathNet.Numerics.Distributions;
 using MathNet.Numerics.LinearAlgebra.Double;
 using Titanium;
 
@@ -20,6 +16,7 @@ namespace Program
 		
 		public MainForm()
 		{
+			//CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 			InitializeComponent();
 			btnCalculateAll.Enabled = false;
 			btnSave.Enabled = false;
@@ -39,6 +36,7 @@ namespace Program
 			dgv1.ColumnWidthChanged += ResizeButtons;
 			ToolTip tip = new ToolTip();
 			tip.SetToolTip(btnCalculatePolynom,"Вычисляет полином, необходимый для регрессионного анализа");
+			
 		}
 
 		private void Dgv1_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
@@ -156,7 +154,7 @@ namespace Program
 				}
 				else
 				{
-					btnCalculatePolynom.Text = "Пересчитать";
+					btnCalculatePolynom.Text = "Пересчитать полином";
 					btnTrace.Enabled = btnCalculateCell.Enabled = btnCalculateAll.Enabled = true;
 				}
 			}
@@ -164,8 +162,10 @@ namespace Program
 
 		private void btnCalculatePolynom_Click(object sender, EventArgs eArgs)
 		{
+#if !DEBUG
 			try
 			{
+#endif
 				int columnsCount = dgv1.Columns.Count;
 				if (tbOrder.Text == "") throw new ApplicationException("Введите порядок перед вычислением");
 				int order = tbOrder.Text.ToIntT(false, -1);
@@ -190,8 +190,8 @@ namespace Program
 							double temp = -1;
 							try
 							{
-								temp = dgv1[j, i].Value.ToString().ToDoubleT(); //! Бутылочное горлышко
-							}
+								temp = dgv1[j, i].Value.GetDouble(); //% Бутылочное горлышко
+							}                                                   // FIXED (вроде бы)
 							catch (Exception)
 							{
 								skip = true; //:Если хотя бы одна из ячеек не заполнена, пропускаю строку
@@ -236,11 +236,13 @@ namespace Program
 				}
 
 				labelInfo.Text = "Полином вычислен!";
+#if !DEBUG
 			}
 			catch (ApplicationException ex)
 			{
 				MessageBox.Show("Ошибка: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
+#endif
 		}
 
 		private void btnCalculateCell_Click(object sender, EventArgs e)
@@ -259,7 +261,7 @@ namespace Program
 			{
 				try
 				{
-					result += _Polynoms[i, CellPosition.X].Fit(dgv1[i, CellPosition.Y].Value.ToString().ToDoubleT());
+					result += _Polynoms[i, CellPosition.X].Fit(dgv1[i, CellPosition.Y].Value.GetDouble());
 				}
 				catch (Exception)
 				{
@@ -278,9 +280,9 @@ namespace Program
 			{
 				foreach (DataGridViewCell cell in row.Cells)
 				{
-					if (!double.IsNaN(cell.Value.ToString().ToDoubleT(ThrowException: true))) continue; //: Если ячейка не пуста, то пропустить
+					if (!double.IsNaN(cell.Value.GetDouble())) continue; //: Если ячейка не пуста, то пропустить
 					
-					CalculateCell(new Point(cell.RowIndex, cell.ColumnIndex)); //: Иначе, вычислить значение
+					CalculateCell(new Point(cell.ColumnIndex, cell.RowIndex)); //: Иначе, вычислить значение
 				}
 			}
 		}
@@ -328,7 +330,7 @@ namespace Program
 
 		#region Интерфейсные функции
 
-		private void loadFile(string[] fileLines)
+		private void loadFile(string[] fileLines)  //:27.10.2022 Теперь он закидывает в dgv Double вместо String
 		{
 			try
 			{
@@ -349,7 +351,15 @@ namespace Program
 				foreach (var line in fileLines[1..])
 				{
 					var rows = line.Split('\t');
-					dgv1.Rows.Add(rows[1..]);
+					dgv1.Rows.Add();
+
+					var t = rows[1..].ToDoubleT('.');
+					for (var i = 0; i < t.Length; i++)
+					{
+						var num = t[i];
+						dgv1.Rows[^1].Cells[i].Value = double.IsNaN(num)? "" : num;
+					}
+
 					dgv1.Rows[^1].HeaderCell.Value = rows[0];
 				}
 
@@ -372,7 +382,7 @@ namespace Program
 			{
 				using (var sw = new StreamWriter(Path,true))
 				{
-					for (int i = 0; i < dgv1.Columns.Count; i++)
+					for (int i = 0; i < dgv1.Columns.Count; i++)  //: Заголовки столбцов
 					{
 						sw.Write(dgv1.Columns[i].HeaderText + (i== dgv1.Columns.Count-1? "": '\t'));
 					}
@@ -381,11 +391,12 @@ namespace Program
 
 					for (int i = 0; i < dgv1.Rows.Count; i++)
 					{
-						sw.Write(dgv1.Rows[i].HeaderCell.Value .ToString() + '\t');
+						sw.Write(dgv1.Rows[i].HeaderCell.Value.ToString() + '\t'); //: Заголовок строки
 						for (int j = 0; j < dgv1.Rows[i].Cells.Count; j++)
 						{
-							sw.Write(dgv1.Rows[i].Cells[j].Value.ToString() + (j==dgv1.Rows[i].Cells.Count-1? '\n':'\t'));
-						}
+							var value = dgv1.Rows[i].Cells[j].Value;
+							sw.Write(value is double d? d.ToString() : value.ToString() + (j==dgv1.Rows[i].Cells.Count-1? '\n':'\t')); //: Значение ячейки
+						} //TODO: Модифицировать ToStringT(), чтобы гарантировано записывал только точки
 					}
 
 					/*foreach (DataGridViewRow row in dgv1.Rows)
@@ -449,9 +460,32 @@ namespace Program
 
 		#endregion
 
+		private void dgv1_ColumnAdded_1(object sender, DataGridViewColumnEventArgs e)
+		{
+			e.Column.DefaultCellStyle.FormatProvider = CultureInfo.InvariantCulture;
+		}
+
+		private void dgv1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+		{
+			if (e.ColumnIndex<0||e.RowIndex<0) return; //: WTF index<0???
+			var cellValue = dgv1[e.ColumnIndex, e.RowIndex].Value;
+			var cellStringValue = cellValue.ToString();
+			if (string.IsNullOrEmpty(cellStringValue)) return;
+
+			int slicePosition = cellStringValue.Length;
+			for (int i = cellStringValue.Length-1; i >=0 ; i++)
+			{
+				if (cellValue.ToString()[i].IsDoubleT()) break;
+			}
+			if (slicePosition != cellStringValue.Length) //:if cellStringValue changed
+				dgv1[e.ColumnIndex, e.RowIndex].Value = cellStringValue[..slicePosition];
+
+		}
 	}
 	public static class MyFuncs
 	{
+		public static double GetDouble(this object obj) => obj is double value ? value : obj.ToString().ToDoubleT();
+
 		public static void Clear(this DataGridView dgv)
 		{
 			dgv.Rows.Clear();  // удаление всех строк

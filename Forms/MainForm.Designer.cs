@@ -73,6 +73,8 @@ namespace Program
 			this.dgv1.RowTemplate.Height = 33;
 			this.dgv1.Size = new System.Drawing.Size(696, 521);
 			this.dgv1.TabIndex = 13;
+			this.dgv1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv1_CellValueChanged);
+			this.dgv1.ColumnAdded += new System.Windows.Forms.DataGridViewColumnEventHandler(this.dgv1_ColumnAdded_1);
 			// 
 			// btnSave
 			// 
