@@ -8,6 +8,7 @@
 - [WindowsARM64](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-5.0.17-windows-arm64-installer)
 
 Скриншот программы:
-![Скриншот 27-10-2022 230928](https://user-images.githubusercontent.com/15982179/198377387-24461907-80c4-4179-a0ed-d8007c7ff929.jpg)
+
+![Скриншот 27-10-2022 230928_1](https://user-images.githubusercontent.com/15982179/198377634-0dac3030-c741-4ab9-a5ee-51e47d1307c3.jpg)
 
 Последние 2 ячейки вычисленны программой
