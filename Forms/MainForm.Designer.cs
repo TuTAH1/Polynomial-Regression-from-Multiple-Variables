@@ -43,13 +43,16 @@ namespace Program
 			this.btnAddRow = new System.Windows.Forms.Button();
 			this.btnTrace = new System.Windows.Forms.Button();
 			this.btnCalculateAll = new System.Windows.Forms.Button();
+			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+			this.настройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)(this.dgv1)).BeginInit();
+			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// btnCalculatePolynom
 			// 
 			this.btnCalculatePolynom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.btnCalculatePolynom.Location = new System.Drawing.Point(279, 654);
+			this.btnCalculatePolynom.Location = new System.Drawing.Point(279, 690);
 			this.btnCalculatePolynom.Name = "btnCalculatePolynom";
 			this.btnCalculatePolynom.Size = new System.Drawing.Size(208, 40);
 			this.btnCalculatePolynom.TabIndex = 8;
@@ -67,11 +70,11 @@ namespace Program
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.dgv1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dgv1.Location = new System.Drawing.Point(11, 127);
+			this.dgv1.Location = new System.Drawing.Point(11, 169);
 			this.dgv1.Name = "dgv1";
 			this.dgv1.RowHeadersWidth = 62;
 			this.dgv1.RowTemplate.Height = 33;
-			this.dgv1.Size = new System.Drawing.Size(696, 521);
+			this.dgv1.Size = new System.Drawing.Size(696, 515);
 			this.dgv1.TabIndex = 13;
 			this.dgv1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv1_CellValueChanged);
 			this.dgv1.ColumnAdded += new System.Windows.Forms.DataGridViewColumnEventHandler(this.dgv1_ColumnAdded_1);
@@ -80,7 +83,7 @@ namespace Program
 			// 
 			this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnSave.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(255)))), ((int)(((byte)(222)))));
-			this.btnSave.Location = new System.Drawing.Point(597, 8);
+			this.btnSave.Location = new System.Drawing.Point(588, 49);
 			this.btnSave.Name = "btnSave";
 			this.btnSave.Size = new System.Drawing.Size(107, 38);
 			this.btnSave.TabIndex = 6;
@@ -92,7 +95,7 @@ namespace Program
 			// btnLoad
 			// 
 			this.btnLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnLoad.Location = new System.Drawing.Point(436, 8);
+			this.btnLoad.Location = new System.Drawing.Point(427, 49);
 			this.btnLoad.Name = "btnLoad";
 			this.btnLoad.Size = new System.Drawing.Size(155, 38);
 			this.btnLoad.TabIndex = 5;
@@ -104,7 +107,7 @@ namespace Program
 			// labelInfo
 			// 
 			this.labelInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelInfo.Location = new System.Drawing.Point(436, 45);
+			this.labelInfo.Location = new System.Drawing.Point(427, 86);
 			this.labelInfo.Name = "labelInfo";
 			this.labelInfo.Size = new System.Drawing.Size(268, 38);
 			this.labelInfo.TabIndex = 6;
@@ -113,7 +116,7 @@ namespace Program
 			// 
 			// btnAddColumn
 			// 
-			this.btnAddColumn.Location = new System.Drawing.Point(223, 8);
+			this.btnAddColumn.Location = new System.Drawing.Point(214, 49);
 			this.btnAddColumn.Name = "btnAddColumn";
 			this.btnAddColumn.Size = new System.Drawing.Size(194, 38);
 			this.btnAddColumn.TabIndex = 2;
@@ -124,7 +127,7 @@ namespace Program
 			// 
 			// tbAddColumn
 			// 
-			this.tbAddColumn.Location = new System.Drawing.Point(21, 8);
+			this.tbAddColumn.Location = new System.Drawing.Point(12, 49);
 			this.tbAddColumn.Name = "tbAddColumn";
 			this.tbAddColumn.Size = new System.Drawing.Size(195, 31);
 			this.tbAddColumn.TabIndex = 1;
@@ -132,7 +135,7 @@ namespace Program
 			// 
 			// panelColumnButtons
 			// 
-			this.panelColumnButtons.Location = new System.Drawing.Point(11, 87);
+			this.panelColumnButtons.Location = new System.Drawing.Point(2, 128);
 			this.panelColumnButtons.Name = "panelColumnButtons";
 			this.panelColumnButtons.Size = new System.Drawing.Size(999, 33);
 			this.panelColumnButtons.TabIndex = 18;
@@ -141,7 +144,7 @@ namespace Program
 			// 
 			this.labelOrder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelOrder.AutoSize = true;
-			this.labelOrder.Location = new System.Drawing.Point(12, 661);
+			this.labelOrder.Location = new System.Drawing.Point(12, 697);
 			this.labelOrder.Name = "labelOrder";
 			this.labelOrder.Size = new System.Drawing.Size(174, 25);
 			this.labelOrder.TabIndex = 99;
@@ -150,7 +153,7 @@ namespace Program
 			// tbOrder
 			// 
 			this.tbOrder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.tbOrder.Location = new System.Drawing.Point(192, 658);
+			this.tbOrder.Location = new System.Drawing.Point(192, 694);
 			this.tbOrder.Name = "tbOrder";
 			this.tbOrder.Size = new System.Drawing.Size(81, 31);
 			this.tbOrder.TabIndex = 7;
@@ -159,7 +162,7 @@ namespace Program
 			// btnCalculateCell
 			// 
 			this.btnCalculateCell.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnCalculateCell.Location = new System.Drawing.Point(12, 700);
+			this.btnCalculateCell.Location = new System.Drawing.Point(12, 736);
 			this.btnCalculateCell.Name = "btnCalculateCell";
 			this.btnCalculateCell.Size = new System.Drawing.Size(314, 40);
 			this.btnCalculateCell.TabIndex = 10;
@@ -170,7 +173,7 @@ namespace Program
 			// 
 			// tbAddRow
 			// 
-			this.tbAddRow.Location = new System.Drawing.Point(21, 50);
+			this.tbAddRow.Location = new System.Drawing.Point(12, 91);
 			this.tbAddRow.Name = "tbAddRow";
 			this.tbAddRow.Size = new System.Drawing.Size(195, 31);
 			this.tbAddRow.TabIndex = 3;
@@ -178,7 +181,7 @@ namespace Program
 			// 
 			// btnAddRow
 			// 
-			this.btnAddRow.Location = new System.Drawing.Point(224, 50);
+			this.btnAddRow.Location = new System.Drawing.Point(215, 91);
 			this.btnAddRow.Name = "btnAddRow";
 			this.btnAddRow.Size = new System.Drawing.Size(194, 38);
 			this.btnAddRow.TabIndex = 4;
@@ -190,7 +193,7 @@ namespace Program
 			// btnTrace
 			// 
 			this.btnTrace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnTrace.Location = new System.Drawing.Point(493, 654);
+			this.btnTrace.Location = new System.Drawing.Point(493, 690);
 			this.btnTrace.Name = "btnTrace";
 			this.btnTrace.Size = new System.Drawing.Size(219, 40);
 			this.btnTrace.TabIndex = 9;
@@ -203,7 +206,7 @@ namespace Program
 			// 
 			this.btnCalculateAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnCalculateAll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(222)))), ((int)(((byte)(255)))));
-			this.btnCalculateAll.Location = new System.Drawing.Point(332, 700);
+			this.btnCalculateAll.Location = new System.Drawing.Point(332, 736);
 			this.btnCalculateAll.Name = "btnCalculateAll";
 			this.btnCalculateAll.Size = new System.Drawing.Size(381, 40);
 			this.btnCalculateAll.TabIndex = 11;
@@ -213,11 +216,29 @@ namespace Program
 			this.btnCalculateAll.Click += new System.EventHandler(this.btnCalculateAll_Click);
 			this.btnCalculateAll.Paint += new System.Windows.Forms.PaintEventHandler(this.ButtonPaint);
 			// 
+			// menuStrip1
+			// 
+			this.menuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
+			this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.настройкиToolStripMenuItem});
+			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+			this.menuStrip1.Name = "menuStrip1";
+			this.menuStrip1.Size = new System.Drawing.Size(718, 33);
+			this.menuStrip1.TabIndex = 100;
+			this.menuStrip1.Text = "menuStrip1";
+			// 
+			// настройкиToolStripMenuItem
+			// 
+			this.настройкиToolStripMenuItem.Name = "настройкиToolStripMenuItem";
+			this.настройкиToolStripMenuItem.Size = new System.Drawing.Size(116, 29);
+			this.настройкиToolStripMenuItem.Text = "Настройки";
+			this.настройкиToolStripMenuItem.Click += new System.EventHandler(this.настройкиToolStripMenuItem_Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(718, 745);
+			this.ClientSize = new System.Drawing.Size(718, 781);
 			this.Controls.Add(this.btnCalculateAll);
 			this.Controls.Add(this.btnTrace);
 			this.Controls.Add(this.btnAddRow);
@@ -233,10 +254,14 @@ namespace Program
 			this.Controls.Add(this.dgv1);
 			this.Controls.Add(this.btnSave);
 			this.Controls.Add(this.btnLoad);
+			this.Controls.Add(this.menuStrip1);
+			this.MainMenuStrip = this.menuStrip1;
 			this.MinimumSize = new System.Drawing.Size(740, 300);
 			this.Name = "MainForm";
 			this.Text = "Регрессионный анализатор";
 			((System.ComponentModel.ISupportInitialize)(this.dgv1)).EndInit();
+			this.menuStrip1.ResumeLayout(false);
+			this.menuStrip1.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -258,6 +283,8 @@ namespace Program
 		private System.Windows.Forms.Button btnAddRow;
 		private System.Windows.Forms.Button btnTrace;
 		private System.Windows.Forms.Button btnCalculateAll;
+		private System.Windows.Forms.MenuStrip menuStrip1;
+		private System.Windows.Forms.ToolStripMenuItem настройкиToolStripMenuItem;
 	}
 }
 

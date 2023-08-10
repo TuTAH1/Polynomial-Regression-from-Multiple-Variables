@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using CsvHelper;
 using MathNet.Numerics.LinearAlgebra.Double;
 using Titanium;
+using Program;
 
 namespace Program
 {
@@ -46,12 +49,13 @@ namespace Program
 
 		#region Обработчики событий
 
+		// LOAD
 		private void btnLoad_Click(object sender, EventArgs eArgs)
 		{
 			OpenFileDialog openDialog = new OpenFileDialog();
 			openDialog.Multiselect = false;
 			openDialog.Title = "Выберите файл";
-			openDialog.Filter = "Файл таблицы|*.dgf";
+			openDialog.Filter = "Файл таблицы|*.csv";
 			if (openDialog.ShowDialog() == DialogResult.OK)
 			{
 				labelInfo.Text = "Идёт загрузка файла...";
@@ -62,11 +66,12 @@ namespace Program
 			
 		}
 
+		//SAVE
 		private void btnSave_Click(object sender, EventArgs eArgs)
 		{
 			SaveFileDialog saveDialog = new SaveFileDialog();
 			saveDialog.Title = "Выберите место для сохранения";
-			saveDialog.Filter = "Файл таблицы|*.dgf";
+			saveDialog.Filter = "Файл таблицы|*.csv";
 			if (saveDialog.ShowDialog() == DialogResult.OK)
 			{
 				labelInfo.Text = "Идёт сохранение файла...";
@@ -75,6 +80,8 @@ namespace Program
 
 			}
 		}
+
+		//TABLE EDIT
 
 		private void btnAddColumn_Click(object sender, EventArgs eArgs)
 		{
@@ -160,6 +167,8 @@ namespace Program
 			}
 		}
 
+		// MATH
+		// CALCULATING POLINOM
 		private void btnCalculatePolynom_Click(object sender, EventArgs eArgs)
 		{
 #if !DEBUG
@@ -173,36 +182,31 @@ namespace Program
 				tbOrder.Text = order.ToString();
 				labelInfo.Text = "Идёт вычисление полинома";
 
-				List<double[]> stuffedRow = new List<double[]>(); //: Строки, где ВСЕ ячейки заполненны
-				bool[,] emptyCells = new bool[dgv1.Rows.Count,columnsCount];
-				stuffedRow.Add(new double[dgv1.Columns.Count]);
+				//: Строки, где ВСЕ ячейки заполненны
+				List<double[]> stuffedRow = new();
+			//	bool[,] emptyCells = new bool[dgv1.Rows.Count,columnsCount];
+			//	stuffedRow.Add(new double[dgv1.Columns.Count]);
 
 				int k = 0;
 				bool skip;
 				for (int i = 0; i < dgv1.Rows.Count; i++)
 				{
 					skip = false;
+					stuffedRow.Add(new double[dgv1.Columns.Count]);
 					for (int j = 0; j <columnsCount; j++)
 					{
-						if (skip) emptyCells[i, j] = true;
-						else
+						if (skip) continue; //emptyCells[i, j] = true; else {
+						//FIXED (вроде бы) ↓
+						var temp = dgv1[j, i].Value.GetDouble(); //% Бутылочное горлышко 
+						if (double.IsNaN(temp)) //:Если хотя бы одна из ячеек не заполнена, пропускаю строку
 						{
-							double temp = -1;
-							try
-							{
-								temp = dgv1[j, i].Value.GetDouble(); //% Бутылочное горлышко
-							}                                                   // FIXED (вроде бы)
-							catch (Exception)
-							{
-								skip = true; //:Если хотя бы одна из ячеек не заполнена, пропускаю строку
-							}
-
-							stuffedRow[k][j] = temp;
+							skip = true; 
+						//	temp = -1; //: Legacy Я не помню, зачем нужно это значение. Гораздо надёжнее заменить это NaN'ом (но тогда всё ломается)
 						}
+						else stuffedRow[k][j] = temp;
 					}
-					if (skip) continue;
-					stuffedRow.Add(new double[dgv1.Columns.Count]);
-					k++;
+					if (skip) stuffedRow.RemoveAt(stuffedRow.Count-1); //: Если строка пропущена, удалить её
+					else k++;
 				}
 
 				if (k == 0) throw new ApplicationException("Ни найдено ни одной строки с полными данными. Для регрессионного анализа необходимо хотя бы несколько полностью заполненных строк");
@@ -259,15 +263,12 @@ namespace Program
 			double result = 0;
 			for (int i = 0; i < dgv1.Columns.Count; i++)
 			{
-				try
-				{
-					result += _Polynoms[i, CellPosition.X].Fit(dgv1[i, CellPosition.Y].Value.GetDouble());
-				}
-				catch (Exception)
-				{
+				if (i==CellPosition.X) 
 					continue;
-				}
-
+				var value = dgv1[i, CellPosition.Y].Value.GetDouble();
+				if (double.IsNaN(value)) continue;
+				result += _Polynoms[i, CellPosition.X].Fit(value);
+				
 				calculationsCount++;
 			}
 
@@ -326,20 +327,40 @@ namespace Program
 			base.OnPaint(e);
 		}
 
+		private void просмотрСправкиToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				new Process(){StartInfo = new ProcessStartInfo("Справка.docx"){UseShellExecute = true}}.Start();
+			}
+			catch (Exception exception)
+			{
+				MessageBox.Show(exception.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		}
 		#endregion
 
 		#region Интерфейсные функции
 
-		private void loadFile(string[] fileLines)  //:27.10.2022 Теперь он закидывает в dgv Double вместо String
+		private void loadFile(string[] FileLines)  //:27.10.2022 Теперь он закидывает в dgv Double вместо String
 		{
 			try
 			{
-				
-				if (fileLines.Length == 0) throw new FileLoadException("Файл пустой");
+				int currentLine = 0;
+				if (FileLines.Length == 0) throw new FileLoadException("Файл пустой");
 
+				char? sepTemp = FileLines[currentLine].Slice("sep=")?[0];
+				char separator = 't';
+				if (sepTemp != null)
+				{
+					currentLine++;
+					separator = (char)sepTemp;
+				}
+					
+				
 				dgv1.Rows.Clear();
 
-				foreach (var columnName in fileLines[0].Split('\t'))
+				foreach (var columnName in FileLines[currentLine++].Split('\t'))
 				{
 					if(columnName!= "") dgv1.Columns.Add(columnName, columnName);
 				}
@@ -348,7 +369,7 @@ namespace Program
 				//if (fileLines.Length == 1) throw new FileLoadException("Файл не содержит данных, но имена столбцов добавлены");
 
 
-				foreach (var line in fileLines[1..])
+				foreach (var line in FileLines[currentLine..])
 				{
 					var rows = line.Split('\t');
 					dgv1.Rows.Add();
@@ -381,6 +402,7 @@ namespace Program
 			try
 			{
 				using var sw = new StreamWriter(Path,false);
+				//sw.WriteLine("sep=\t");
 				for (int i = 0; i < dgv1.Columns.Count; i++)  //: Заголовки столбцов
 				{
 					sw.Write(dgv1.Columns[i].HeaderText + (i== dgv1.Columns.Count-1? "": '\t'));
@@ -395,7 +417,7 @@ namespace Program
 					{
 						var value = dgv1.Rows[i].Cells[j].Value;
 						sw.Write((value is double d? d.ToString(CultureInfo.InvariantCulture) : value.ToString()) + (j==dgv1.Rows[i].Cells.Count-1? '\n':'\t')); //: Значение ячейки
-					} //TODO: Модифицировать ToStringT(), чтобы гарантировано записывал только точки
+					}
 				}
 
 				/*foreach (DataGridViewRow row in dgv1.Rows)
@@ -480,10 +502,15 @@ namespace Program
 				dgv1[e.ColumnIndex, e.RowIndex].Value = cellStringValue[..slicePosition];*/
 
 		}
+
+		private void настройкиToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+
+		}
 	}
 	public static class MyFuncs
 	{
-		public static double GetDouble(this object obj) => obj is double value ? value : obj.ToString().ToDoubleT();
+		public static double GetDouble(this object obj) => obj is double value ? value : obj.ToString().ToDoubleT(ThrowException: false);
 
 		public static void Clear(this DataGridView dgv)
 		{
